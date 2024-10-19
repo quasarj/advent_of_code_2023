@@ -12,7 +12,7 @@ impl GameMove {
         let mut result = Self {
             red: 0,
             green: 0,
-            blue: 0
+            blue: 0,
         };
 
         // println!("{}", move_string);
@@ -31,7 +31,6 @@ impl GameMove {
                 _ => {}
             }
         }
-
 
         // println!("{:?}", result);
 
@@ -77,7 +76,6 @@ fn min_color(moves: &Vec<GameMove>) -> u64 {
     // println!("{max_red}, {max_green}, {max_blue}");
 
     (max_red * max_green * max_blue) as u64
-
 }
 
 fn main() {
@@ -94,7 +92,6 @@ fn main() {
         let game = parts[0];
         let moves = parts[1];
         let game_id = game_id_to_int(&game);
-        
 
         // println!("{}", game_id);
         let gamemoves = process_moves(&moves);

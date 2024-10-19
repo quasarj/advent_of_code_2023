@@ -1,6 +1,7 @@
-use std::str::Chars;
-use std::fs::read_to_string;
+use log;
 use std::collections::HashSet;
+use std::fs::read_to_string;
+use std::str::Chars;
 
 #[derive(Debug, Default, PartialEq, Eq, Hash)]
 struct Point {
@@ -10,7 +11,7 @@ struct Point {
 #[derive(Debug, Default, PartialEq, Eq, Hash)]
 struct Number {
     start: Point,
-    end: Point
+    end: Point,
 }
 impl Number {
     /***
@@ -25,7 +26,6 @@ impl Number {
         false
     }
     fn get_actual_number(&self, schematic: &Schematic) -> u64 {
-
         let row = &schematic[self.start.row as usize];
         let chars = &row[self.start.col as usize..self.end.col as usize];
         let s = String::from_iter(chars);
@@ -49,7 +49,7 @@ impl Number {
         // ...\|/...
         // ...-d-...
         // .../|\...
-        // 
+        //
         // looking for "symbols" (anything that is not a number and not a .)
 
         // i is row
@@ -58,7 +58,8 @@ impl Number {
         let max_i = (schematic.len() as u64) - 1;
         let max_j = (schematic[0].len() as u64) - 1;
         // check up left
-        if i > 0 && j > 0 { // if not, skip this check
+        if i > 0 && j > 0 {
+            // if not, skip this check
             let i = i - 1;
             let j = j - 1;
             if check_position(&schematic, i, j) {
@@ -73,7 +74,8 @@ impl Number {
             }
         }
         // check up right
-        if i > 0 && j < max_j { // if not, skip this check
+        if i > 0 && j < max_j {
+            // if not, skip this check
             let i = i - 1;
             let j = j + 1;
             if check_position(&schematic, i, j) {
@@ -95,7 +97,8 @@ impl Number {
             }
         }
         // check down left
-        if i < max_i && j > 0 { // if not, skip this check
+        if i < max_i && j > 0 {
+            // if not, skip this check
             let i = i + 1;
             let j = j - 1;
             if check_position(&schematic, i, j) {
@@ -110,7 +113,8 @@ impl Number {
             }
         }
         // check down right
-        if i < max_i && j < max_j { // if not, skip this check
+        if i < max_i && j < max_j {
+            // if not, skip this check
             let i = i + 1;
             let j = j + 1;
             if check_position(&schematic, i, j) {
@@ -149,7 +153,8 @@ fn find_the_numbers(schematic: &Schematic) -> Vec<Number> {
                 }
                 // println!("{}", c);
                 previous_was_number = true;
-            } else { // the character is NOT numeric
+            } else {
+                // the character is NOT numeric
                 if previous_was_number {
                     // println!("number ends");
                     current_number.end.row = i as u64;
@@ -161,7 +166,7 @@ fn find_the_numbers(schematic: &Schematic) -> Vec<Number> {
                 previous_was_number = false;
             }
         }
-        // at the end of the row, if we were still reading a number, 
+        // at the end of the row, if we were still reading a number,
         // need to end it here!
         if previous_was_number {
             current_number.end.row = i as u64;
@@ -177,17 +182,17 @@ fn find_the_numbers(schematic: &Schematic) -> Vec<Number> {
 }
 
 fn main() {
-    println!("Hello");
+    env_logger::init();
     // let filename = "input/day3-test.txt";
     let filename = "input/day3.txt";
+    log::info!("Using filename={filename}");
     let mut schematic: Schematic = Vec::new();
     let binding = read_to_string(filename).unwrap();
     for line in binding.lines() {
-
         let tvec: Vec<char> = line.chars().collect();
         schematic.push(tvec);
     }
-    // println!("{:?}", schematic);
+    log::debug!("{:?}", schematic);
 
     // find all the numbers
     let numbers = find_the_numbers(&schematic);
@@ -217,7 +222,6 @@ fn main() {
     //          if the symbol ends up with a score of 2, it counts
 
     find_stars(&schematic, &part_numbers);
-
 }
 
 fn square(i: usize, j: usize, max_i: usize, max_j: usize) -> Vec<(u64, u64)> {
@@ -237,16 +241,17 @@ fn square(i: usize, j: usize, max_i: usize, max_j: usize) -> Vec<(u64, u64)> {
         (i, j - 1),     // left        -
     ];
     // convert to u64s here
-    let result: Vec<_> = square.iter().filter(|(x, y)| {
-        // drop any that are out of range
-        *x >= 0 &&
-            *y >= 0 &&
-            *x <= max_i &&
-            *y <= max_j
-    }).map(|(x, y)| {
-        // convert to u64
-        (*x as u64, *y as u64)
-    }).collect();
+    let result: Vec<_> = square
+        .iter()
+        .filter(|(x, y)| {
+            // drop any that are out of range
+            *x >= 0 && *y >= 0 && *x <= max_i && *y <= max_j
+        })
+        .map(|(x, y)| {
+            // convert to u64
+            (*x as u64, *y as u64)
+        })
+        .collect();
     result
 }
 
@@ -256,7 +261,7 @@ fn find_stars(schematic: &Schematic, part_numbers: &Vec<&Number>) {
         for (j, c) in row.into_iter().enumerate() {
             if *c == '*' {
                 //
-                // get coordinates around the given point. Requires the 
+                // get coordinates around the given point. Requires the
                 // max values to make sure it doens't return anything invalid
                 //
                 let s = square(i, j, schematic.len() - 1, row.len() - 1);
@@ -273,8 +278,10 @@ fn find_stars(schematic: &Schematic, part_numbers: &Vec<&Number>) {
                     // get the gear ratio
                     let gear_ratio = gear_numbers
                         .iter()
-                        .map(|x| x.get_actual_number(&schematic)).collect::<Vec<_>>()
-                        .iter().product::<u64>();
+                        .map(|x| x.get_actual_number(&schematic))
+                        .collect::<Vec<_>>()
+                        .iter()
+                        .product::<u64>();
                     gear_ratio_total += gear_ratio;
                 }
             }
@@ -282,4 +289,3 @@ fn find_stars(schematic: &Schematic, part_numbers: &Vec<&Number>) {
     }
     println!("{gear_ratio_total}");
 }
-

@@ -1,10 +1,7 @@
 use std::fs::read_to_string;
 
 fn get_calibration_value(line: &str) -> u64 {
-    let nums: Vec<char> = line
-        .chars()
-        .filter(|x| x.is_numeric())
-        .collect();
+    let nums: Vec<char> = line.chars().filter(|x| x.is_numeric()).collect();
     let first_and_last = vec![nums.first().unwrap(), nums.last().unwrap()];
 
     (String::from_iter(first_and_last)).parse::<u64>().unwrap()
@@ -19,13 +16,12 @@ fn part1() {
     }
 
     println!("The calibration value for this input file is: {}", total);
-    
 }
 
 #[derive(Debug)]
 enum Number {
     Digit(u8),
-    Word(String)
+    Word(String),
 }
 
 impl Number {
@@ -43,7 +39,7 @@ impl Number {
                 "eight" => 8,
                 "nine" => 9,
                 "ten" => 10,
-                _ => 0
+                _ => 0,
             },
         }
     }
@@ -63,16 +59,7 @@ fn part2() {
     let filename = "input/day1.txt";
 
     let words = vec![
-        "one",
-        "two",
-        "three",
-        "four",
-        "five",
-        "six",
-        "seven",
-        "eight",
-        "nine",
-        "ten"
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
     ];
 
     let mut all_numbers: Vec<u16> = Vec::new();
@@ -101,27 +88,21 @@ fn part2() {
 
         numbers.sort_by_key(|k| k.1);
         // println!("{:?}", numbers);
-        let first = &numbers
-            .first()
-            .unwrap()
-            .0;
-        let last = &numbers
-            .last()
-            .unwrap()
-            .0;
+        let first = &numbers.first().unwrap().0;
+        let last = &numbers.last().unwrap().0;
         // println!("{:?}//{:?}", first, last);
         // println!("{}", to_two_digit_int(first, last));
         all_numbers.push(to_two_digit_int(first, last));
     }
 
-
     // let mut tosort = vec![("five", 5), ("six", 4)];
     // tosort.sort_by_key(|k| k.1);
 
     // println!("{:?}", all_numbers);
-    println!("The updated calibration value is: {}",
-             all_numbers.iter().sum::<u16>());
-
+    println!(
+        "The updated calibration value is: {}",
+        all_numbers.iter().sum::<u16>()
+    );
 }
 
 fn main() {

@@ -79,6 +79,7 @@ dependencies = [
  "env_logger",
  "log",
  "logos",
+ "regex",
 ]
 
 [[package]]
